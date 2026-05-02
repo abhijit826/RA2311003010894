@@ -1,14 +1,17 @@
-# Stage 1
+# Stage 1: Notification System Design
 
-## REST APIs
+## Overview
+Design a notification system for students to receive real-time updates for placements, events, and results.
 
-### GET /notifications
-Fetch user notifications
+## API Endpoints
 
-Query:
+### 1. Get Notifications
+GET /notifications
+
+Query Params:
 - userId
-- type
-- isRead
+- type (placement/event/result)
+- isRead (true/false)
 - page
 - limit
 
@@ -17,31 +20,47 @@ Response:
   "notifications": [
     {
       "id": "123",
-      "type": "Placement",
-      "message": "Selected",
-      "timestamp": "2026-05-02",
+      "type": "placement",
+      "message": "You are shortlisted",
+      "timestamp": "2026-05-02T10:00:00Z",
       "isRead": false
     }
   ]
 }
 
+---
 
+### 2. Create Notification
+POST /notifications
 
-### POST /notifications
-Create notification
+Request:
+{
+  "userId": "456",
+  "type": "event",
+  "message": "New event scheduled"
+}
 
+---
 
-### POST /notifications/read
-Mark notification as read
+### 3. Mark as Read
+POST /notifications/read
+
+Request:
+{
+  "notificationId": "123"
+}
+
+---
 
 ## Headers
-Authorization: Bearer token
+- Authorization: Bearer token
+- Content-Type: application/json
 
+---
 
-
-## Real-time
-Use WebSocket / SSE
-
+## Real-time Mechanism
+- Use WebSockets or Server-Sent Events (SSE)
+- Push notifications instantly to users
 
 
 
