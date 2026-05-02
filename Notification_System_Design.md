@@ -28,7 +28,7 @@ Response:
   ]
 }
 
----
+
 
 ### 2. Create Notification
 POST /notifications
@@ -40,7 +40,7 @@ Request:
   "message": "New event scheduled"
 }
 
----
+
 
 ### 3. Mark as Read
 POST /notifications/read
@@ -50,13 +50,13 @@ Request:
   "notificationId": "123"
 }
 
----
+
 
 ## Headers
 - Authorization: Bearer token
 - Content-Type: application/json
 
----
+
 
 ## Real-time Mechanism
 - Use WebSockets or Server-Sent Events (SSE)
@@ -156,7 +156,6 @@ Flow:
    - Send push notification
 4. Retry failed jobs
 
----
 
 ## Revised Pseudocode
 
@@ -186,17 +185,28 @@ function worker():
 
 
 
-
-
 # Stage 6
 
 ## Approach
-- Fetch notifications from API
-- Sort by priority:
-  Placement > Result > Event
-- Sort by timestamp
-- Return top 10
 
-## Optimization
-- Use heap (priority queue)
+- Fetch notifications using provided API
+- Assign priority:
+  - Placement > Result > Event
+- Sort by:
+  - Priority (descending)
+  - Timestamp (latest first)
+- Return top 10 notifications
+
+
+
+## Handling Continuous Data
+
+- Maintain a min-heap of size 10
 - Keep only top 10 in memory
+- Replace lowest priority when new notification arrives
+
+
+## Complexity
+
+- Sorting: O(n log n)
+- Heap approach: O(n log 10)
