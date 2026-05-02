@@ -18,7 +18,7 @@ function getPriority(type) {
 // Main function
 async function getTopNotifications() {
   try {
-    console.log("Using Token:", process.env.LOG_TOKEN); // debug
+    
 
     const res = await fetch(`${BASE}/notifications`, {
       method: "GET",
@@ -27,7 +27,7 @@ async function getTopNotifications() {
 
     const data = await res.json();
 
-    console.log("API RESPONSE:", data); // debug
+  
 
   
     if (!data.notifications) {
