@@ -111,19 +111,81 @@ AND createdAt >= NOW() - INTERVAL 7 DAY;
 - Lazy loading
 - WebSocket instead of polling
 
+
+
 # Stage 5
 
-## Problem
-- Synchronous calls
-- Failure breaks system
+## Problems in Current Implementation
 
-## Fix
-Use queue (Kafka / RabbitMQ)
+1. Synchronous execution:
+   - Each operation runs sequentially → very slow for 50,000 users
 
-## New Flow
-- Push jobs to queue
-- Worker sends emails
-- Retry failed jobs
+2. Failure handling issue:
+   - If `send_email` fails midway (like 200 users), system stops
+   - No retry mechanism → data inconsistency
+
+3. Tight coupling:
+   - Email, DB, and push notification are executed together
+   - One failure affects all
+
+4. Not scalable:
+   - Cannot handle large traffic (50k users)
+
+
+
+## Should DB save and Email sending happen together?
+
+ NO
+
+Reason:
+- Email is external (can fail, slow)
+- DB should be reliable and fast
+- Decouple both operations
+
+
+
+## Improved Design
+
+Use asynchronous architecture with message queue
+
+Flow:
+1. Save notification to DB
+2. Push job to queue (Kafka / RabbitMQ)
+3. Workers process:
+   - Send email
+   - Send push notification
+4. Retry failed jobs
+
+---
+
+## Revised Pseudocode
+
+function notify_all(student_ids, message):
+
+    for student_id in student_ids:
+        save_to_db(student_id, message)
+
+        enqueue_job({
+            "student_id": student_id,
+            "message": message
+        })
+
+
+# Worker process
+function worker():
+
+    while true:
+        job = get_next_job()
+
+        try:
+            send_email(job.student_id, job.message)
+            push_to_app(job.student_id, job.message)
+
+        except:
+            retry_job(job)
+
+
+
 
 
 # Stage 6
