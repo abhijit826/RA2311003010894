@@ -10,8 +10,7 @@ async function runScheduler(req, res) {
     const vehiclesData = await getVehicles();
 
   
-    console.log("DEPOTS:", depotsData);
-    console.log("VEHICLES:", vehiclesData);
+  
 
     const depots = depotsData.depots;
     const vehicles = vehiclesData.vehicles;
